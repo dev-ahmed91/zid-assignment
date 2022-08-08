@@ -7,7 +7,6 @@ use App\Models\Item;
 use App\Repository\ItemRepository;
 use App\Serializers\ItemSerializer;
 use App\Serializers\ItemsSerializer;
-use Illuminate\Http\JsonResponse;
 use App\Traits\HttpResponseStatus;
 use League\CommonMark\CommonMarkConverter;
 
@@ -15,7 +14,7 @@ class ItemController extends Controller
 {
     use HttpResponseStatus;
 
-    public $itemsRepository;
+    public ItemRepository $itemsRepository;
 
     public function __construct(ItemRepository $itemRepository)
     {
@@ -26,8 +25,8 @@ class ItemController extends Controller
     {
         $items = $this->itemsRepository->all();
 
+        return $this->successResponse(['items'=>(new ItemsSerializer($items))->getData()]);
 
-        return JsonResponse::create(['items' => (new ItemsSerializer($items))->getData()]);
     }
 
     public function store(ItemsRequest $request)
@@ -36,43 +35,26 @@ class ItemController extends Controller
         $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false]);
 
         $item = $this->itemsRepository->create($request->only(['name','price','url','description']));
-//        $item = Item::create([
-//            'name' => $request->get('name'),
-//            'price' => $request->get('price'),
-//            'url' => $request->get('url'),
-//            'description' => $converter->convert($request->get('description'))->getContent(),
-//        ]);
 
         $serializer = new ItemSerializer($item);
 
-
-        return new JsonResponse(['item' => $serializer->getData()]);
+        return $this->successResponse(['item' => $serializer->getData()]);
     }
 
     public function show(Item $item)
     {
         $serializer = new ItemSerializer($item);
 
-        return new JsonResponse(['item' => $serializer->getData()]);
+        return $this->successResponse(['item' => $serializer->getData()]);
     }
 
-    public function update(ItemsRequest $request, Item $item): JsonResponse
+    public function update(ItemsRequest $request, Item $item)
     {
 
-        //$converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false]);
-
-//        $item->name = $request->get('name');
-//        $item->url = $request->get('url');
-//        $item->price = $request->get('price');
-//        $item->description = $converter->convert($request->get('description'))->getContent();
-//        $item->save();
 
         $item = $this->itemsRepository->update($item->id,$request->only(['name','price','url','description']));
-
-        return new JsonResponse(
-            [
-                'item' => (new ItemSerializer($item))->getData()
-            ]
-        );
+        return $this->successResponse([
+            'item' => (new ItemSerializer($item))->getData()
+        ]);
     }
 }
