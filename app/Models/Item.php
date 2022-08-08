@@ -9,5 +9,7 @@ class Item extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name','price','url','description'];
+
     protected $guarded = ['id'];
 }
