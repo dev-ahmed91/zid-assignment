@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemsRequest;
+use App\Http\Resources\ItemsResource;
 use App\Models\Item;
 use App\Repository\ItemRepository;
 use App\Serializers\ItemSerializer;
-use App\Serializers\ItemsSerializer;
 use App\Traits\HttpResponseStatus;
-use League\CommonMark\CommonMarkConverter;
+use Illuminate\Http\JsonResponse;
 
 class ItemController extends Controller
 {
@@ -23,38 +23,39 @@ class ItemController extends Controller
 
     public function index()
     {
-        $items = $this->itemsRepository->all();
-
-        return $this->successResponse(['items'=>(new ItemsSerializer($items))->getData()]);
-
+        $items = ItemsResource::collection($this->itemsRepository->all());
+        return JsonResponse::create(['items' => $items]);
     }
 
     public function store(ItemsRequest $request)
     {
-
-        $converter = new CommonMarkConverter(['html_input' => 'escape', 'allow_unsafe_links' => false]);
-
-        $item = $this->itemsRepository->create($request->only(['name','price','url','description']));
-
-        $serializer = new ItemSerializer($item);
-
-        return $this->successResponse(['item' => $serializer->getData()]);
+        $this->logInfo(__METHOD__);
+        try {
+            $item = $this->itemsRepository->create($request->only(['name','price','url','description']));
+            return new JsonResponse(['item' => $item]);
+        }catch (\Exception $e){
+            return JsonResponse(["errors"   => ["exception" => "Error on saving data. Error Code: " .$this->logError(__METHOD__, $e)]], 500);
+        }
     }
 
     public function show(Item $item)
     {
-        $serializer = new ItemSerializer($item);
-
-        return $this->successResponse(['item' => $serializer->getData()]);
+        $item_details = new ItemsResource($item);
+        return new JsonResponse(['item' => $item_details]);
     }
 
     public function update(ItemsRequest $request, Item $item)
     {
-
-
-        $item = $this->itemsRepository->update($item->id,$request->only(['name','price','url','description']));
-        return $this->successResponse([
-            'item' => (new ItemSerializer($item))->getData()
-        ]);
+        $this->logInfo(__METHOD__);
+        try {
+            $item = $this->itemsRepository->update($item->id,$request->only(['name','price','url','description']));
+            return new JsonResponse(
+                [
+                    'item' => new ItemsResource($item)
+                ]
+            );
+        }catch (\Exception $e){
+            return JsonResponse(["errors"   => ["exception" => "Error on updating data. Error Code: " .$this->logError(__METHOD__, $e)]], 500);
+        }
     }
 }
