@@ -42,7 +42,7 @@ Please write your answers to following questions.
 > _..._
 
 > **For the refactoring, would you change something else if you had more time?**  
->  i think no
+>  i think no but we can use token for allow only authorized users for access the endpoints
 > _..._
 
 ## Running the project
