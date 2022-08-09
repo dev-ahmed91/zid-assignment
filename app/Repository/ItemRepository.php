@@ -26,4 +26,5 @@ class ItemRepository extends BaseRepository
         parent::__construct($model);
         $this->model = $model;
     }
+
 }

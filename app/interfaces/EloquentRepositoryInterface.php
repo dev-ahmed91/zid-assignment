@@ -101,4 +101,19 @@ interface EloquentRepositoryInterface
      * @return bool
      */
     public function permanentlyDeleteById(int $modelId): bool;
+
+    /**
+     * @return int
+     */
+    public function countAllData(): int;
+
+    /**
+     * @return float
+     */
+    public function getAverageForColumn($column): float;
+
+    /**
+     * @return float
+     */
+    public function getSumDataAddedThisMonth($column): float;
 }

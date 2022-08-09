@@ -6,8 +6,10 @@ namespace App\Repository;
 
 use App\Interfaces\EloquentRepositoryInterface;
 use App\Traits\QueryLimit;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class BaseRepository
@@ -163,4 +165,33 @@ class BaseRepository implements EloquentRepositoryInterface
     {
         return $this->model->findTrashedById($modelId)->forceDelete();
     }
+
+    /**
+     * @return int
+     */
+    public function countAllData(): int
+    {
+        return $this->model->count('*');
+    }
+
+    /**
+     * @param string $column
+     * @return float
+     */
+    public function getAverageForColumn($column): float
+    {
+        return $this->model->avg($column);
+    }
+
+    /**
+     * @param string $column
+     * @return float
+     */
+    public function getSumDataAddedThisMonth($column): float
+    {
+        return $this->model->select('*')
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum($column);
+    }
+
 }

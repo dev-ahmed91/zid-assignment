@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,10 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/items', [ItemController::class, 'index']);
-//Route::post('/items', [ItemController::class, 'store']);
-//Route::get('/items/{id}', [ItemController::class, 'show']);
-//Route::put('/items/{id}', [ItemController::class, 'update']);
-
 Route::resource('items',ItemController::class)->only(['index', 'store', 'show', 'update']);
+
+Route::group([
+                'prefix' => 'statistics'
+            ],function(){
+    Route::get('count_items',[StatisticsController::class,'countItems']);
+    Route::get('average_price',[StatisticsController::class,'getItemsAveragePrice']);
+    Route::get('sum_price_this_month',[StatisticsController::class,'getItemsTotalPriceThisMonth']);
+
+});
 
