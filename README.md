@@ -28,11 +28,21 @@ statistic should be displayed.
 Please write your answers to following questions.
 
 > **Please briefly explain your implementation of the new feature**  
->  
+>  created new routes and controller for get statistics using api endpoint.
+>   created a command for get statistics  using CLI commands
+>   php artisan show:statistic (statistic parameter)
+>   allowed parameters
+>       count_items     -> get total items count                -> php artisan show:statistic count_items
+>       average_price   -> average price of all items           -> php artisan show:statistic average_price 
+>                Note : for get average price for specific item we must have a multiple price for the item that mean that
+>               we must have another table for item prics (one to many relation ship) and we don't have that here
+>       sum_price_month -> total price of items added this month -> php artisan show:statistic sum_price_month
+
+>          
 > _..._
 
 > **For the refactoring, would you change something else if you had more time?**  
->  
+>  i think no
 > _..._
 
 ## Running the project
